@@ -1,27 +1,24 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
 import { ThemeProvider } from "./provider/theme-provider";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+const geistSans = Geist({
   variable: "--font-geist-sans",
-  weight: "100 900",
+  subsets: ["latin"],
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+
+const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
-  weight: "100 900",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Slider - AI PPT Generator",
-  description: "Generate PPTs using AI",
+  title: "Slide - PPT Generator",
+  description: "Slide is a modern PPT Generator using AI.",
 };
 
 export default function RootLayout({
@@ -30,23 +27,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      suppressHydrationWarning
-      lang="en" className={cn("font-sans", geist.variable)}>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    <ClerkProvider
+      appearance={{
+        baseTheme: dark,
+      }}
+    >
+      <html
+        lang="en"
+        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
-      </body>
-    </html>
+        <body className="min-h-full flex flex-col"
+          suppressHydrationWarning>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
